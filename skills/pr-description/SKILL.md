@@ -1,6 +1,6 @@
 ---
 name: pr-description
-description: Makes PR descriptions human-friendly. Use always when writing or editing PR descriptions.
+description: Makes PR descriptions human-friendly. Use always when writing or editing PR descriptions. Trigger words: `open a PR`, `create a PR`, `update the PR description`
 argument-hint: "<PR number, or blank for the current branch>"
 ---
 
