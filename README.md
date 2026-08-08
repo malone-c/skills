@@ -72,6 +72,23 @@ Each reply ends with a hidden `<!-- responded-to: <id> -->` marker, which is how
 knows what it has already answered — GitHub does not thread top-level comments, so
 without it the "new comments only" check would be guesswork.
 
+## `/pr-loop`
+
+```
+/pr-loop [PR number] [interval]
+```
+
+Answers review comments on a timer until the reviewers go quiet. Defaults to the PR for
+the current branch and a 10 minute interval; creates the PR with `/pr-description` first
+if the branch has none.
+
+Each pass runs `/respond-to-comments` and updates a counter. Answering something resets
+it; finding nothing adds one. At two consecutive quiet passes the loop disarms itself.
+It also stops as soon as the PR leaves the `OPEN` state.
+
+The timer is a session-scoped cron job, so it lives only as long as the Claude Code
+session, fires only while that session is idle, and expires after 7 days.
+
 ## License
 
 MIT
