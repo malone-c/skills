@@ -55,7 +55,11 @@ Then drop everything that is not actually review feedback:
 - **Bots.** Anything with `.user.type == "Bot"`, or a login ending in `[bot]`. Preview
   deploys, coverage reports, and CI summaries are not asking you for anything, and
   replying to them posts noise on a public PR.
-- **Your own comments**, and pure-approval reviews with empty bodies.
+- **Replies this skill already posted** — any comment whose body contains
+  `responded-to:`. This is what stops you answering yourself, so match on the marker, not
+  on the author. The PR author is usually the Claude Code user, and their notes on their
+  own PR are exactly the work you were asked to do.
+- **Pure-approval reviews** with empty bodies.
 - **Comments with no ask in them** — "nice", "thanks for fixing", ":shipit:". Answering
   these with a formal decision block reads as sarcasm.
 
