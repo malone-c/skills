@@ -89,13 +89,13 @@ It also stops as soon as the PR leaves the `OPEN` state.
 The timer is a session-scoped cron job, so it lives only as long as the Claude Code
 session, fires only while that session is idle, and expires after 7 days.
 
-## License
-
-MIT
-
 ## Troubleshooting
 
 If a skill does not appear after install, restart Claude Code. Skills are read at
 startup, so a running session will not see a newly installed skill.
 
 If `npx skills update` reports no changes, clear the cache with `rm -rf ~/.npm/_npx`.
+
+## License
+
+MIT
