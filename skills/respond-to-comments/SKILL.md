@@ -1,6 +1,6 @@
 ---
 name: respond-to-comments
-description: Work through unanswered review comments on a GitHub PR — investigate each one, decide whether to accept it, apply accepted fixes, and reply in a fixed format. Use when asked to respond to PR comments, review feedback, or reviewer suggestions.
+description: Work through review comments on a GitHub PR. Use when asked to respond to PR comments or review feedback
 argument-hint: "<PR number, or blank for the current branch>"
 ---
 

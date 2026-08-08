@@ -1,6 +1,6 @@
 ---
 name: pr-description
-description: Should always be used when writing or editing PR descriptions. Structures the body as Problem / Fix / Extra context — short bullets humans skim, with the long context folded into a dropdown for agents.
+description: Makes PR descriptions human-friendly. Use always when writing or editing PR descriptions.
 argument-hint: "<PR number, or blank for the current branch>"
 ---
 

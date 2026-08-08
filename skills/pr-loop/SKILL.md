@@ -1,6 +1,6 @@
 ---
 name: pr-loop
-description: Keep answering review comments on a PR on a timer until the reviewers go quiet. Creates the PR first if the branch has none. Use when asked to watch a PR, keep up with review comments, or poll for feedback.
+description: Creates a loop to listen for and respond to feedback on PRs. Use when asked to `loop on this PR` or `keep up with review comments`
 argument-hint: "<PR number> <interval, e.g. 5m — default 10m>"
 ---
 
