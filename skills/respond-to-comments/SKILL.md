@@ -48,9 +48,18 @@ Every reply this skill posts ends with a hidden marker naming the comment it ans
 ```
 
 Collect those ids from all comments authored by `$ME`. A comment is unanswered if its
-id is not in that set. Skip your own comments and pure-approval reviews with empty bodies.
+id is not in that set.
 
-If nothing is unanswered, say so and stop.
+Then drop everything that is not actually review feedback:
+
+- **Bots.** Anything with `.user.type == "Bot"`, or a login ending in `[bot]`. Preview
+  deploys, coverage reports, and CI summaries are not asking you for anything, and
+  replying to them posts noise on a public PR.
+- **Your own comments**, and pure-approval reviews with empty bodies.
+- **Comments with no ask in them** — "nice", "thanks for fixing", ":shipit:". Answering
+  these with a formal decision block reads as sarcasm.
+
+If nothing survives, say so and stop.
 
 ## 4. Investigate, then decide
 
