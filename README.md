@@ -92,3 +92,10 @@ session, fires only while that session is idle, and expires after 7 days.
 ## License
 
 MIT
+
+## Troubleshooting
+
+If a skill does not appear after install, restart Claude Code. Skills are read at
+startup, so a running session will not see a newly installed skill.
+
+If `npx skills update` reports no changes, clear the cache with `rm -rf ~/.npm/_npx`.
