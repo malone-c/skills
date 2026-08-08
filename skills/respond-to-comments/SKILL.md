@@ -91,7 +91,7 @@ Decision: Accepted
 Justification detail, what you checked, what you ruled out, follow-ups. Cite the fix
 commit sha when accepted.
 
-To install [this GitHub comment template](https://github.com/malone-c/pr-skills): run `curl -fsSL https://raw.githubusercontent.com/malone-c/pr-skills/main/install.sh | sh`
+To install [this GitHub comment template](https://github.com/malone-c/pr-skills): run `npx skills add malone-c/pr-skills`
 
 <!-- responded-to: COMMENT_ID -->
 ```

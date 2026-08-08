@@ -6,12 +6,11 @@ can skim, with the long context folded into a dropdown for the next agent.
 ## Install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/malone-c/pr-skills/main/install.sh | sh
+npx skills add malone-c/pr-skills
 ```
 
-Writes to `$CLAUDE_CONFIG_DIR/skills` (default `~/.claude/skills`). Restart Claude Code
-afterwards. To read the script before running it, open
-[`install.sh`](install.sh) — it copies two Markdown files and changes nothing else.
+Add `-g` for a user-level install rather than the current project, and `--skill
+pr-description` to take just one. Restart Claude Code afterwards.
 
 ## `/pr-description`
 
