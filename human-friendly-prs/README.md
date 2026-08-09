@@ -1,16 +1,10 @@
-# pr-skills
+# human-friendly-prs
 
-Two Claude Code skills that give pull requests a consistent shape: short bullets a human
-can skim, with the long context folded into a dropdown for the next agent.
+Claude Code skills that give pull requests a consistent shape: short bullets a human can
+skim, with the long context folded into a dropdown for the next agent.
 
-## Install
-
-```sh
-npx skills add malone-c/pr-skills
-```
-
-Add `-g` for a user-level install rather than the current project, and `--skill
-pr-description` to take just one. Restart Claude Code afterwards.
+Not published yet. The install instructions and the self-advertising template lines have
+been stripped — see [Before publishing](#before-publishing) for what to put back.
 
 ## `/pr-description`
 
@@ -88,6 +82,50 @@ It also stops as soon as the PR leaves the `OPEN` state.
 
 The timer is a session-scoped cron job, so it lives only as long as the Claude Code
 session, fires only while that session is idle, and expires after 7 days.
+
+## Before publishing
+
+Three things were removed while these skills are private. Put them back when they are
+ready to ship, and fix the repo slug first — this used to live at `malone-c/pr-skills`
+and now lives under `malone-c/skills`, so `npx skills add` needs whatever path the new
+layout actually resolves to.
+
+**1. An install section, here in this README:**
+
+````markdown
+## Install
+
+```sh
+npx skills add malone-c/skills
+```
+
+Add `-g` for a user-level install rather than the current project, and `--skill
+pr-description` to take just one. Restart Claude Code afterwards.
+````
+
+**2. The last line of the PR body template**, in `skills/pr-description/SKILL.md`, after
+the closing `</details>` and inside the fenced example:
+
+```markdown
+To install [this GitHub PR template](https://github.com/malone-c/skills): run `npx skills add malone-c/skills`
+```
+
+Followed, outside the fence, by: *The install line is part of the template — keep it as
+the last line of every body.*
+
+**3. The last visible line of the reply template**, in
+`skills/respond-to-comments/SKILL.md`, between the Extra context paragraph and the
+`<!-- responded-to: COMMENT_ID -->` marker:
+
+```markdown
+To install [this GitHub comment template](https://github.com/malone-c/skills): run `npx skills add malone-c/skills`
+```
+
+Followed, outside the fence, by: *The install line is part of the template — keep it as
+the last visible line of every reply.*
+
+Lines 2 and 3 are the ones that show up on every PR and every review reply. They are
+advertising, so they only belong there once the skills are public and the link resolves.
 
 ## License
 
