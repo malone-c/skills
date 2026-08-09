@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lorem Ipsum — slides</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="slides.css" />
+    <script src="theme.js"></script>
+  </head>
+
+  <body class="deck-body">
+    <button class="theme-toggle" type="button">dark</button>
+
+    <div class="deck" id="deck">
+      <section class="slide slide--title">
+        <div class="slide-inner">
+          <div
+            class="dither"
+            style="--dither-src: url('assets/orb.png'); --dither-ratio: 1"
+            role="img"
+            aria-label="Dithered sphere"
+          ></div>
+          <h1>Lorem Ipsum</h1>
+          <p class="muted">Dolor sit amet &mdash; 9 August 2026</p>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>Consectetur adipiscing</h2>
+          <p>
+            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+            minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+            commodo consequat.
+          </p>
+          <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+            fugiat nulla pariatur.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <h2>Excepteur sint occaecat</h2>
+          <ul>
+            <li>Cupidatat non proident, sunt in culpa</li>
+            <li>
+              Qui officia deserunt mollit
+              <span class="tip" data-tip="Tooltips work on slides too." tabindex="0"
+                >anim id est</span
+              >
+            </li>
+            <li>Laborum et dolorum fuga</li>
+            <li>Nam libero tempore, cum soluta nobis</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-inner">
+          <blockquote>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+            doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+            veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+          </blockquote>
+          <p class="muted">&mdash; Cicero, <i>De finibus</i>, 45 BC</p>
+        </div>
+      </section>
+
+      <section class="slide slide--title">
+        <div class="slide-inner">
+          <div
+            class="dither dither--wide"
+            style="--dither-src: url('assets/band.png'); --dither-ratio: 40 / 1"
+            role="img"
+            aria-label="Dithered band"
+          ></div>
+          <h2>Neque porro quisquam est</h2>
+          <p>Qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.</p>
+        </div>
+      </section>
+
+      <section class="slide slide--title">
+        <div class="slide-inner">
+          <h1>Finis</h1>
+          <p class="muted">
+            <a href="page.html">Back to the page template</a>
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <nav class="deck-nav">
+      <button id="deck-prev" aria-label="Previous slide">&larr;</button>
+      <span><span id="deck-position">1</span> / <span id="deck-total">1</span></span>
+      <button id="deck-next" aria-label="Next slide">&rarr;</button>
+    </nav>
+
+    <div class="deck-progress" id="deck-progress"></div>
+
+    <script>
+      const deck = document.getElementById("deck");
+      const slides = [...deck.children];
+      const prevButton = document.getElementById("deck-prev");
+      const nextButton = document.getElementById("deck-next");
+      const position = document.getElementById("deck-position");
+      const progress = document.getElementById("deck-progress");
+
+      document.getElementById("deck-total").textContent = slides.length;
+      slides.forEach((slide) => {
+        slide.classList.add("is-primed");
+        // Staggers the entry animation of each slide's children.
+        [...slide.firstElementChild.children].forEach((child, step) =>
+          child.style.setProperty("--step", step),
+        );
+      });
+
+      let index = Math.min(Math.max(parseInt(location.hash.slice(1), 10) - 1 || 0, 0), slides.length - 1);
+
+      function render() {
+        deck.style.transform = `translate3d(${-index * 100}%, 0, 0)`;
+        slides.forEach((slide, i) => {
+          slide.classList.toggle("is-current", i === index);
+          if (i === index) slide.classList.remove("is-primed");
+        });
+        position.textContent = index + 1;
+        progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+        prevButton.disabled = index === 0;
+        nextButton.disabled = index === slides.length - 1;
+        history.replaceState(null, "", `#${index + 1}`);
+      }
+
+      function goto(next) {
+        const clamped = Math.min(Math.max(next, 0), slides.length - 1);
+        if (clamped === index) {
+          deck.style.transform = `translate3d(${-index * 100}%, 0, 0)`;
+          return;
+        }
+        index = clamped;
+        render();
+      }
+
+      prevButton.addEventListener("click", () => goto(index - 1));
+      nextButton.addEventListener("click", () => goto(index + 1));
+
+      document.addEventListener("keydown", (event) => {
+        const keys = {
+          ArrowRight: index + 1,
+          ArrowLeft: index - 1,
+          PageDown: index + 1,
+          PageUp: index - 1,
+          " ": index + 1,
+          Home: 0,
+          End: slides.length - 1,
+        };
+        if (!(event.key in keys)) return;
+        event.preventDefault();
+        goto(keys[event.key]);
+      });
+
+      // Touch and pen drag only, so text stays selectable with a mouse.
+      let dragStart = null;
+      let dragged = 0;
+
+      deck.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "mouse") return;
+        dragStart = event.clientX;
+        dragged = 0;
+        deck.classList.add("is-dragging");
+        deck.setPointerCapture(event.pointerId);
+      });
+
+      deck.addEventListener("pointermove", (event) => {
+        if (dragStart === null) return;
+        dragged = event.clientX - dragStart;
+        deck.style.transform = `translate3d(calc(${-index * 100}% + ${dragged}px), 0, 0)`;
+      });
+
+      function endDrag() {
+        if (dragStart === null) return;
+        dragStart = null;
+        deck.classList.remove("is-dragging");
+        const threshold = Math.min(120, window.innerWidth * 0.15);
+        goto(dragged <= -threshold ? index + 1 : dragged >= threshold ? index - 1 : index);
+      }
+
+      deck.addEventListener("pointerup", endDrag);
+      deck.addEventListener("pointercancel", endDrag);
+
+      render();
+    </script>
+  </body>
+</html>

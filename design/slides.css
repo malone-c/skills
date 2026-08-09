@@ -1,0 +1,142 @@
+/* Slide deck: same house style as page.html, one slide per screen, horizontal swipe.
+   Load after style.css. */
+
+body.deck-body {
+  height: 100dvh;
+  padding: 0;
+  overflow: hidden;
+}
+
+.deck {
+  display: flex;
+  height: 100dvh;
+  will-change: transform;
+  transition: transform 480ms var(--ease);
+  touch-action: pan-y;
+}
+
+.deck.is-dragging {
+  transition: none;
+}
+
+.slide {
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3.5rem 1.5rem 4.5rem;
+  overflow-y: auto;
+}
+
+.slide-inner {
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+
+.slide--title .slide-inner {
+  text-align: center;
+}
+
+.slide h1 {
+  font-size: 2.5em;
+  margin-bottom: 1rem;
+}
+
+.slide h2 {
+  margin-top: 0;
+  font-size: 1.6em;
+}
+
+.slide blockquote {
+  margin-left: 0;
+  font-size: 1.15em;
+}
+
+.slide .dither {
+  width: min(13rem, 45%);
+  margin: 0 auto 1.5rem;
+}
+
+.slide .dither--wide {
+  width: 100%;
+}
+
+/* ---- content settles in as each slide arrives ---- */
+
+/* Primed = never shown yet. Slides keep their content once they have been seen, so
+   nothing blinks out mid-swipe. */
+html.js .slide.is-primed .slide-inner > * {
+  opacity: 0;
+}
+
+html.js .slide.is-current .slide-inner > * {
+  animation: slide-rise 420ms var(--ease) both;
+  animation-delay: calc(var(--step, 0) * 70ms);
+}
+
+@keyframes slide-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- chrome ---- */
+
+.deck-nav {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 0.9rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.deck-nav button {
+  font: inherit;
+  font-family: var(--serif);
+  padding: 0.1rem 0.35rem;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 120ms var(--ease);
+}
+
+.deck-nav button:hover:not(:disabled) {
+  color: var(--ink);
+}
+
+.deck-nav button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.deck-progress {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background: var(--ink);
+  opacity: 0.3;
+  transition: width 480ms var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .slide.is-primed .slide-inner > * {
+    opacity: 1;
+  }
+
+  html.js .slide.is-current .slide-inner > * {
+    animation: none;
+  }
+}
