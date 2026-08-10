@@ -52,9 +52,11 @@ id is not in that set.
 
 Then drop everything that is not actually review feedback:
 
-- **Bots.** Anything with `.user.type == "Bot"`, or a login ending in `[bot]`. Preview
-  deploys, coverage reports, and CI summaries are not asking you for anything, and
-  replying to them posts noise on a public PR.
+- **Status automation.** Preview deploy links, coverage reports, CI summaries, and
+  bundle-size tables are not asking you for anything. Judge by content, not by author:
+  a machine login is not grounds for skipping. Review bots — Codex, Claude, Copilot,
+  Vercel Agent — are the main source of feedback this skill exists to answer, and
+  dropping them leaves the PR unaddressed.
 - **Replies this skill already posted** — any comment whose body contains
   `responded-to:`. This is what stops you answering yourself, so match on the marker, not
   on the author. The PR author is usually the Claude Code user, and their notes on their
