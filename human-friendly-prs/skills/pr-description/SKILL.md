@@ -31,11 +31,7 @@ Everything you would normally put in a PR description: reasoning, alternatives
 rejected, file-by-file notes, test evidence, migration steps, risk.
 
 </details>
-
-To install [this GitHub PR template](https://github.com/malone-c/pr-skills): run `npx skills add malone-c/pr-skills`
 ```
-
-The install line is part of the template — keep it as the last line of every body.
 
 ## Rules
 
