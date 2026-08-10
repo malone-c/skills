@@ -35,6 +35,9 @@ Problem bullets are declarative, Fix bullets are imperative. Max 7 per section, 
 characters each — they are read at a glance, not studied. Everything long goes in the
 dropdown.
 
+A PR carrying several distinct changes gets one `# Issue N: <title>` heading each, with
+Problem and Fix as level-2 headings underneath and a single `# Extra context` at the end.
+
 The skill deliberately stands down when the description was written by a co-contributor,
 when the PR already has content in another shape, or when you have asked for something
 that does not fit the structure cleanly.

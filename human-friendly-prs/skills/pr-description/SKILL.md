@@ -33,9 +33,51 @@ rejected, file-by-file notes, test evidence, migration steps, risk.
 </details>
 ```
 
+## Several changes in one PR
+
+When the PR carries more than one distinct change, give each its own `# Issue N: <title>`
+heading and demote Problem and Fix to level 2 underneath it. One `# Extra context` at the
+end still covers the whole PR.
+
+```markdown
+# Issue 1: Cache key ignores the region
+
+## Problem
+
+- us-east reads hit eu-west entries
+
+## Fix
+
+- Add region to the cache key
+
+# Issue 2: Stale entries survive deploys
+
+## Problem
+
+- The TTL is never refreshed
+
+## Fix
+
+- Reset the TTL on every write
+
+# Extra context
+
+<details>
+<summary>Details</summary>
+
+...
+
+</details>
+```
+
+Titles are short noun phrases, not sentences. Only split when the changes stand on their
+own — steps toward one goal are a single Problem/Fix, and splitting them makes the PR look
+bigger than it is.
+
 ## Rules
 
-- All three headings, level 1, in that order. Nothing before `# Problem`.
+- Level-1 headings in order, nothing before the first one. Either `# Problem`, `# Fix`,
+  `# Extra context`, or a run of `# Issue N: ...` followed by `# Extra context`.
 - Problem and Fix hold ONLY flat `- ` bullets. No prose, no sub-bullets, no sub-headings.
 - Max 7 bullets per section, max 100 characters each. They are read at a glance.
 - Problem bullets are declarative — state what is wrong. "Cache key omits the region."
