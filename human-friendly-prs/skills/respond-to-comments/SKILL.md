@@ -95,21 +95,16 @@ can cite a sha that exists.
 Write each reply to a file and post it verbatim:
 
 ```markdown
-## Identified problem
+[AI-generated from automated review flow]
 
-<=20 words, the problem the commenter identified
+### Summary (for humans)
 
-## Suggested fix
+- **Identified problem**: <=20 words, the problem the commenter identified
+- **Suggested fix**: <=20 words, the fix the commenter suggested
+- **Decision**: Accepted
+- **Reason**: <=20 words, why
 
-<=20 words, the fix the commenter suggested
-
-## Decision
-
-Accepted
-- reason for the decision
-- second reason
-
-## Extra context
+### Extra context (for clankers)
 
 <details>
 <summary>Details</summary>
@@ -122,15 +117,16 @@ commit sha when accepted.
 <!-- responded-to: COMMENT_ID -->
 ```
 
-All four headings, level 2, in that order. Nothing before `## Identified problem`.
+The banner line comes first, then both headings at level 3 in that order. Nothing else
+before `### Summary (for humans)`.
 
-Under `## Decision`, the first line is exactly `Accepted` or `Rejected`, followed by the
-reason bullets. Keep the problem and fix sections to one plain sentence each — no bold,
-no italics, no bullets.
+The four summary bullets are flat, in that order, each `- **Label**: ` followed by one
+plain sentence — no sub-bullets, no nesting. `**Decision**` is exactly `Accepted` or
+`Rejected` and nothing else. Add a second `- **Reason**: ` bullet if one clause genuinely
+will not carry it, no more.
 
-Everything long goes inside the `<details>` block. The three sections above it are read
-at a glance; a reader who never opens the dropdown still knows what was raised and what
-you did about it.
+Everything long goes inside the `<details>` block. The summary is read at a glance; a
+reader who never opens the dropdown still knows what was raised and what you did about it.
 
 Post to the right place:
 

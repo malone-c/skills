@@ -12,17 +12,21 @@ this; the dropdown is for the agent that has to understand it. Keep them apart.
 ## Format
 
 ```markdown
-# Problem
+[AI-generated]
+
+### Summary (for humans)
+
+#### Problem
 
 - Cache key omits the region, so us-east reads hit eu-west entries
 - Stale entries survive deploys because the TTL is never refreshed
 
-# Fix
+#### Fix
 
 - Add region to the cache key
 - Reset the TTL on every write
 
-# Extra context
+### Extra context (for clankers)
 
 <details>
 <summary>Details</summary>
@@ -35,32 +39,36 @@ rejected, file-by-file notes, test evidence, migration steps, risk.
 
 ## Several changes in one PR
 
-When the PR carries more than one distinct change, give each its own `# Issue N: <title>`
-heading and demote Problem and Fix to level 2 underneath it. One `# Extra context` at the
-end still covers the whole PR.
+When the PR carries more than one distinct change, give each its own
+`#### Issue N: <title>` heading inside the summary, with Problem and Fix as bold labels
+underneath it. One `### Extra context (for clankers)` at the end still covers the whole PR.
 
 ```markdown
-# Issue 1: Cache key ignores the region
+[AI-generated]
 
-## Problem
+### Summary (for humans)
+
+#### Issue 1: Cache key ignores the region
+
+**Problem**
 
 - us-east reads hit eu-west entries
 
-## Fix
+**Fix**
 
 - Add region to the cache key
 
-# Issue 2: Stale entries survive deploys
+#### Issue 2: Stale entries survive deploys
 
-## Problem
+**Problem**
 
 - The TTL is never refreshed
 
-## Fix
+**Fix**
 
 - Reset the TTL on every write
 
-# Extra context
+### Extra context (for clankers)
 
 <details>
 <summary>Details</summary>
@@ -76,8 +84,11 @@ bigger than it is.
 
 ## Rules
 
-- Level-1 headings in order, nothing before the first one. Either `# Problem`, `# Fix`,
-  `# Extra context`, or a run of `# Issue N: ...` followed by `# Extra context`.
+- `[AI-generated]` on the first line, then `### Summary (for humans)` and
+  `### Extra context (for clankers)` at level 3, in that order, nothing else between the
+  banner and the summary heading.
+- Inside the summary, either `#### Problem` and `#### Fix`, or a run of
+  `#### Issue N: ...` each holding `**Problem**` and `**Fix**`.
 - Problem and Fix hold ONLY flat `- ` bullets. No prose, no sub-bullets, no sub-headings.
 - Max 7 bullets per section, max 100 characters each. They are read at a glance.
 - Problem bullets are declarative — state what is wrong. "Cache key omits the region."
@@ -86,7 +97,7 @@ bigger than it is.
 - One idea per bullet. If a bullet needs a comma-spliced clause to make sense, it belongs
   in the dropdown.
 - Everything long goes inside `<details>`. Resist putting it in the bullets — a wall of
-  text under `# Problem` defeats the entire format.
+  text under `#### Problem` defeats the entire format.
 
 ## When NOT to apply this
 

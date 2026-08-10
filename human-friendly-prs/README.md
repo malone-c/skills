@@ -11,17 +11,21 @@ been stripped — see [Before publishing](#before-publishing) for what to put ba
 Writes and edits PR bodies in this shape:
 
 ```markdown
-# Problem
+[AI-generated]
+
+### Summary (for humans)
+
+#### Problem
 
 - Cache key omits the region, so us-east reads hit eu-west entries
 - Stale entries survive deploys because the TTL is never refreshed
 
-# Fix
+#### Fix
 
 - Add region to the cache key
 - Reset the TTL on every write
 
-# Extra context
+### Extra context (for clankers)
 
 <details>
 <summary>Details</summary>
@@ -35,8 +39,8 @@ Problem bullets are declarative, Fix bullets are imperative. Max 7 per section, 
 characters each — they are read at a glance, not studied. Everything long goes in the
 dropdown.
 
-A PR carrying several distinct changes gets one `# Issue N: <title>` heading each, with
-Problem and Fix as level-2 headings underneath and a single `# Extra context` at the end.
+A PR carrying several distinct changes gets one `#### Issue N: <title>` heading each inside
+the summary, with Problem and Fix as bold labels underneath.
 
 The skill deliberately stands down when the description was written by a co-contributor,
 when the PR already has content in another shape, or when you have asked for something
@@ -53,16 +57,24 @@ comments, and review summaries; skips resolved and outdated threads; then for ea
 unanswered comment investigates the claim against current `HEAD`, decides whether to
 accept it, commits accepted fixes, and replies in a fixed shape:
 
-```
-Identified problem: <=20 words
-Suggested fix: <=20 words
-Decision: Accepted
-- reason
-- reason
+```markdown
+[AI-generated from automated review flow]
 
-### Extra context
+### Summary (for humans)
+
+- **Identified problem**: <=20 words
+- **Suggested fix**: <=20 words
+- **Decision**: Accepted
+- **Reason**: <=20 words
+
+### Extra context (for clankers)
+
+<details>
+<summary>Details</summary>
 
 What was checked, what was ruled out, the fix commit sha.
+
+</details>
 ```
 
 Each reply ends with a hidden `<!-- responded-to: <id> -->` marker, which is how the skill
