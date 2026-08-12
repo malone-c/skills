@@ -1,7 +1,8 @@
 # human-friendly-prs
 
 Claude Code skills that give pull requests a consistent shape: short bullets a human can
-skim, with the long context folded into a dropdown for the next agent.
+skim, with the long context folded into a dropdown for the next agent. Descriptions,
+reviews and replies to reviews all read the same way.
 
 Not published yet. The install instructions and the self-advertising template lines have
 been stripped — see [Before publishing](#before-publishing) for what to put back.
@@ -45,6 +46,52 @@ the summary, with Problem and Fix as bold labels underneath.
 The skill deliberately stands down when the description was written by a co-contributor,
 when the PR already has content in another shape, or when you have asked for something
 that does not fit the structure cleanly.
+
+## `/pr-review`
+
+```
+/pr-review [PR number]
+```
+
+Defaults to the PR for the current branch. Runs the standard `/code-review` to find the
+problems — it does not review the diff itself — then assigns each finding a priority and
+posts them as one review carrying an inline comment per finding:
+
+```markdown
+[AI-generated from automated code review]
+
+### Summary (for humans)
+
+#### P1: Unsafe use of `eval`
+
+**Problem**
+
+- `runExpr` passes the user-supplied `filter` string straight to `eval`
+
+**Suggested fix**
+
+- Parse the filter with `parseFilter` and evaluate the resulting tree
+
+### Extra context (for clankers)
+
+<details>
+<summary>Details</summary>
+
+Why it matters, the path that reaches it, the standard it breaches.
+
+</details>
+```
+
+`P1` ships a defect, `P2` is a real defect with a narrow blast radius, `P3` is a judgement
+call the author can decline. Priority is severity, never confidence — an uncertain finding
+is not a P3, it either clears `/code-review`'s own confidence bar or it is not posted.
+
+The review body carries the counts and the finding titles; a finding with no line in the
+diff goes there too, since GitHub rejects an inline comment that does not anchor. The
+event is always `COMMENT` — the skill never approves and never requests changes.
+
+Each comment ends with a hidden `<!-- review-finding: <file>:<line>:<slug> -->` marker, so
+a re-review after a push raises what is new instead of repeating itself.
 
 ## `/respond-to-comments`
 
@@ -100,7 +147,7 @@ session, fires only while that session is idle, and expires after 7 days.
 
 ## Before publishing
 
-Three things were removed while these skills are private. Put them back when they are
+Four things were removed while these skills are private. Put them back when they are
 ready to ship, and fix the repo slug first — this used to live at `malone-c/pr-skills`
 and now lives under `malone-c/skills`, so `npx skills add` needs whatever path the new
 layout actually resolves to.
@@ -139,8 +186,17 @@ To install [this GitHub comment template](https://github.com/malone-c/skills): r
 Followed, outside the fence, by: *The install line is part of the template — keep it as
 the last visible line of every reply.*
 
-Lines 2 and 3 are the ones that show up on every PR and every review reply. They are
-advertising, so they only belong there once the skills are public and the link resolves.
+**4. The last visible line of both review templates**, in `skills/pr-review/SKILL.md` —
+the per-finding comment and the roll-up body — between the closing `</details>` and the
+`<!-- review-finding: ... -->` marker:
+
+```markdown
+To install [this GitHub review template](https://github.com/malone-c/skills): run `npx skills add malone-c/skills`
+```
+
+Lines 2, 3 and 4 are the ones that show up on every PR, every review reply and every
+review. They are advertising, so they only belong there once the skills are public and the
+link resolves.
 
 ## License
 
