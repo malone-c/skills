@@ -1,0 +1,305 @@
+/* Base house style: plain Times on white, melange dark when the system asks for it.
+   Shared by page.html and slides.html. */
+
+:root {
+  color-scheme: light dark;
+
+  --paper: #ffffff;
+  --ink: #000000;
+  --muted: #55504b;
+  --rule: #c9c4be;
+  --link: #0000ee;
+  --visited: #551a8b;
+
+  --measure: 31rem;
+  --serif: "Times New Roman", Times, "Liberation Serif", serif;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* melange dark — https://github.com/savq/melange-nvim. Repeated rather than shared so
+   that <html data-theme="…"> can override the system preference in either direction. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #292522;
+    --ink: #ece1d7;
+    --muted: #a98a78;
+    --rule: #403a36;
+    --link: #a3a9ce;
+    --visited: #cf9bc2;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #292522;
+  --ink: #ece1d7;
+  --muted: #a98a78;
+  --rule: #403a36;
+  --link: #a3a9ce;
+  --visited: #cf9bc2;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0 1.25rem 6rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.page {
+  max-width: var(--measure);
+  margin: 2.5rem auto 0;
+}
+
+/* A breadcrumb already provides the top spacing. */
+.breadcrumb + .page {
+  margin-top: 0;
+}
+
+/* Sits at the top-left of the viewport, outside the column. */
+.breadcrumb {
+  margin: 0;
+  padding: 0.85rem 0 2rem;
+  font-style: italic;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 0.85rem;
+  right: 1.25rem;
+  /* The slide deck is its own stacking context and would otherwise swallow the clicks. */
+  z-index: 20;
+  padding: 0.15rem 0.3rem;
+  font: inherit;
+  font-family: var(--serif);
+  font-size: 0.85rem;
+  font-style: italic;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  cursor: pointer;
+  transition: color 120ms var(--ease);
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+/* ---- links ---- */
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-thickness 120ms var(--ease);
+}
+
+a:visited {
+  color: var(--visited);
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+/* ---- text ---- */
+
+h1,
+h2,
+h3 {
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.85em;
+  margin: 0 0 0.65rem;
+}
+
+h2 {
+  font-size: 1.3em;
+  margin: 2.2rem 0 0.5rem;
+}
+
+h3 {
+  font-size: 1.05em;
+  font-style: italic;
+  margin: 1.6rem 0 0.4rem;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.25rem 0 1.75rem;
+}
+
+blockquote {
+  margin: 0 0 1rem 2.5em;
+}
+
+ul,
+ol {
+  margin: 0 0 1rem;
+  padding-left: 1.6em;
+}
+
+li {
+  margin-bottom: 0.2rem;
+}
+
+.meta {
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+.epigraph {
+  margin-left: 2.5em;
+  font-style: italic;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+footer {
+  margin-top: 3.5rem;
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+footer a {
+  color: var(--muted);
+}
+
+/* ---- tooltip: <span class="tip" data-tip="…" tabindex="0">term</span> ---- */
+
+.tip {
+  position: relative;
+  border-bottom: 1px dotted currentColor;
+  cursor: help;
+}
+
+.tip::after,
+.tip::before {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms var(--ease), transform 140ms var(--ease);
+}
+
+.tip::after {
+  content: attr(data-tip);
+  bottom: calc(100% + 0.55rem);
+  transform: translate(-50%, 4px);
+  width: max-content;
+  max-width: 17rem;
+  padding: 0.35rem 0.55rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.78rem;
+  font-style: normal;
+  line-height: 1.35;
+  z-index: 10;
+}
+
+.tip::before {
+  content: "";
+  bottom: calc(100% + 0.25rem);
+  transform: translate(-50%, 4px);
+  border: 0.3rem solid transparent;
+  border-top-color: var(--ink);
+  z-index: 10;
+}
+
+.tip:hover::after,
+.tip:hover::before,
+.tip:focus-visible::after,
+.tip:focus-visible::before {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---- dithered ornaments ----
+   The PNG is an alpha mask, so the ink is whatever colour the page is using.
+   <div class="dither" style="--dither-src: url(assets/orb.png); --dither-ratio: 1"></div> */
+
+.dither {
+  aspect-ratio: var(--dither-ratio, 3 / 1);
+  background-color: currentColor;
+  /* Dithered art is generated small on purpose — keep the dots square when it scales up. */
+  image-rendering: pixelated;
+  -webkit-mask-image: var(--dither-src);
+  mask-image: var(--dither-src);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.dither--header {
+  width: 8rem;
+  margin: 0 auto 1.5rem;
+}
+
+.dither--footer {
+  width: 100%;
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+}
+
+.dither--wide {
+  width: 100%;
+}
+
+/* ---- reveal on scroll, only when JS is running ---- */
+
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(0.5rem);
+  transition: opacity 500ms var(--ease), transform 500ms var(--ease);
+}
+
+html.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html.js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

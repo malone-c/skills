@@ -5,6 +5,11 @@ House style for web pages and slide decks, after the plainness of
 column of left-aligned text, blue underlined links, and nothing else unless it earns its
 place.
 
+Two skills build documents from it: `/design-page` for prose, `/design-deck` for slides.
+Each carries its own copy of the files it needs under `skills/<name>/assets/`, so an
+installed skill works outside a checkout of this repo. Those copies are the ones the
+skills ship; the files below are the ones to edit, and both copies need updating with them.
+
 | File | What it is |
 | --- | --- |
 | `style.css` | The whole style: colour tokens, typography, tooltips, reveal-on-scroll, dithered ornaments. |
@@ -14,6 +19,8 @@ place.
 | `slides.html` | Deck template — same styling, one slide per screen, horizontal swipe. |
 | `dither.py` | Turns a photo into a 2- or 3-colour dithered ornament. |
 | `assets/` | Two sample ornaments, and the greyscale sources they came from. |
+| `skills/design-page/` | Skill that builds a page from `page.html`. |
+| `skills/design-deck/` | Skill that builds a deck from `slides.html`. |
 
 Open the templates over HTTP, not `file://` — the ornaments are CSS masks and browsers
 refuse to load a mask from a `file://` origin, so they come out invisible:
