@@ -4,8 +4,6 @@ A Claude Code skill for stopping work on one machine and picking the same conver
 another. You are mid-session on a laptop, the job wants a GPU or a fast disk or a network you do not
 have, and starting over on the VM means re-explaining everything you just explained.
 
-Not published yet.
-
 ## `/trebuchet`
 
 ```
