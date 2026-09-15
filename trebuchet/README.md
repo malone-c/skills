@@ -15,10 +15,12 @@ Copies code with `git fetch` or `git bundle` depending on whether it's already o
 Then resumes the session on the far side with native Claude Code:
 
 ```
-claude --bg --remote-control --resume <session-id>
+claude --bg --remote-control --fork-session --resume <session-id>
 ```
 
-I.e. a background session on the remote, running in a daemon.
+I.e. a background session on the remote, running in a daemon. `--fork-session` gives the far side a
+new session id carrying the full history, so the VM and your laptop don't share an id and step on
+each other.
 
 Note: Be signed in to Claude on the remote
 
@@ -26,8 +28,8 @@ Note: Be signed in to Claude on the remote
 
 Staged and unstaged changes arrive merged, because the patch is a single `git diff HEAD`. Ignored
 files do not travel at all — `.venv`, `node_modules`, build output, `.env` are yours to recreate.
-And both machines end up holding the same session id, so once you have thrown, only one side can be
-typed into; they do not merge back.
+The throw forks: the VM session shares history up to the throw and diverges after it, so the two
+never merge back.
 
 ## License
 

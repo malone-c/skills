@@ -66,9 +66,9 @@ ssh "$HOST" 'command -v claude || ls ~/.local/bin/claude'
 ssh "$HOST" "$RC --version"
 ```
 
-The background resume path needs Claude Code **v2.1.257 or later** on the far side; that is the
-version where `--bg --resume <full id>` continues the session in place under the same id instead of
-forking a copy. Older than that, stop and ask the user to update Claude Code on the VM.
+The launch needs Claude Code **v2.1.257 or later** on the far side, the floor for resuming a
+conversation into a background session (`--bg --resume`). Older than that, stop and ask the user to
+update Claude Code on the VM.
 
 Remote Control signs in with the machine's saved claude.ai account, so the VM must already be logged
 in with a subscription account (API-key auth can't drive Remote Control). A machine that already runs
@@ -173,7 +173,9 @@ name:
 
 ```bash
 NAME="<repo-name>/$BRANCH"
-ssh "$HOST" "cd $REMOTE_REPO && $RC --bg --remote-control --name '$NAME' --resume $SID" < /dev/null
+LAUNCH=$(ssh "$HOST" "cd $REMOTE_REPO && $RC --bg --remote-control --fork-session --name '$NAME' --resume $SID" < /dev/null)
+printf '%s\n' "$LAUNCH"
+NEW_ID=$(printf '%s' "$LAUNCH" | grep -o -E 'backgrounded · [0-9a-f]{8}' | awk '{print $NF}')
 ```
 
 What each piece buys:
@@ -184,27 +186,33 @@ What each piece buys:
   — none of Herdr's folder-trust waiting.
 - **`--remote-control`** registers the session with claude.ai so you can reach it from a browser or
   the Claude app.
-- **`--resume $SID`** continues *this* conversation. On v2.1.257+ it continues in place under the
-  same id, because no session with that id is running on the VM yet.
+- **`--fork-session`** is what keeps the two machines apart. It reads the copied transcript, carries
+  the full history, and starts the far side under a *new* session id, so the VM and your laptop no
+  longer share one. Without it, `--resume $SID` would continue in place under the same id, and typing
+  on either side would fork the transcript from that point — the two writing over the same identity.
+  The fork is the clean version of what happens anyway: a copy that shares history up to the throw
+  and diverges after it.
+- **`--resume $SID`** names the conversation to fork from — the transcript you copied in step 4.
 - **`< /dev/null`** keeps ssh from holding a stdin the background launcher does not need.
 
-The command prints a short id and the session's claude.ai URL — capture both:
+The command prints the *new* short id and the session's claude.ai URL — the id is assigned by the
+fork, so read it from the output (`$NEW_ID` above) rather than deriving it from `$SID`:
 
 ```
-backgrounded · 571c910e · <name>
+backgrounded · 4a2dec70 · <name>
 ```
 
-The short id is the first eight characters of `$SID`. Pull the URL from the session's log:
+Pull the URL from the session's log:
 
 ```bash
-ssh "$HOST" "$RC logs ${SID:0:8}" | grep -o -E 'https://claude.ai/code/[A-Za-z0-9_]+' | tail -1
+ssh "$HOST" "$RC logs $NEW_ID" | grep -o -E 'https://claude.ai/code/[A-Za-z0-9_]+' | tail -1
 ```
 
 Confirm the throw landed by reading the log — the last few exchanges of this conversation, and an
 `/rc is active` line with the URL, should be there:
 
 ```bash
-ssh "$HOST" "$RC logs ${SID:0:8}" | tail -40
+ssh "$HOST" "$RC logs $NEW_ID" | tail -40
 ```
 
 ## 6. Land
@@ -214,20 +222,22 @@ Tell the user, in this order:
 1. **How to attach.** Any of:
    - Open the claude.ai/code URL in a browser, or find the session by its `<name>` in the session
      list at claude.ai/code or in the Claude app.
-   - On the VM: `ssh -t $HOST '<claude path> attach ${SID:0:8}'` opens it in a terminal.
-2. **To stop working here.** Both machines now hold the same session id, and typing into either
-   writes its own transcript from that point on. They never merge. Whichever side they choose, the
-   other has to be left alone.
+   - On the VM: `ssh -t $HOST '<claude path> attach $NEW_ID'` opens it in a terminal.
+2. **That it is a fork, not a handoff.** The VM session has its own id and shares this conversation's
+   history only up to the throw. From here the two diverge: work on the VM does not appear on the
+   laptop and the reverse, and they never merge. Both are usable — pick the one you mean to continue
+   on and let the other be, or the far side is yours to abandon if the throw was just to borrow the
+   VM's hardware.
 
 The background session keeps running on the VM whether or not anyone is attached. To end it later:
-`ssh "$HOST" "<claude path> stop ${SID:0:8}"`, and `claude rm` to drop it from the list.
+`ssh "$HOST" "<claude path> stop $NEW_ID"`, and `claude rm` to drop it from the list.
 
 ## Gotchas
 
 - The transcript's last entry is normally a tool call that was still in flight, so the resumed
   session opens showing it as interrupted. Expected — the history above it is intact.
-- Throw the same session twice and the second one finds the id already running, so it starts a copy
-  under a new id and says so in a `note:` line. The first throw is untouched.
+- Every throw forks, so throwing the same session twice just lands two independent VM sessions, each
+  with its own id and history up to its throw. Neither disturbs the other or the laptop.
 - `git diff HEAD` flattens the index. What was staged arrives unstaged.
 - Ignored files do not travel: `.venv`, `node_modules`, build output, `.env`. Anything the session
   depended on that git does not track has to be rebuilt or copied on purpose.
