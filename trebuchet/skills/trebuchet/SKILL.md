@@ -1,12 +1,17 @@
 ---
 name: trebuchet
-description: "Moves the current Claude Code session to a remote VM over SSH — syncs the working tree, copies the transcript, and resumes the conversation in a Herdr pane on the far side. Trigger words: `trebuchet`, `move this session to <host>`, `continue this on the VM`, `pick this up on <host>`"
+description: "Moves the current Claude Code session to a remote VM over SSH — syncs the working tree, copies the transcript, and resumes the conversation as a background Remote Control session on the far side, reachable from claude.ai or the terminal. Trigger words: `trebuchet`, `move this session to <host>`, `continue this on the VM`, `pick this up on <host>`"
 argument-hint: "<ssh host> [remote repo path]"
 ---
 
 # Trebuchet
 
 Launch the session over the wall: same conversation, same working tree, running on a VM.
+
+The far side runs it with native Claude Code — `claude --bg --remote-control --resume <id>`. That is
+a background session managed by the machine's Claude Code supervisor: no terminal has to stay open,
+it survives your SSH disconnect, and Remote Control makes it reachable from claude.ai/code, the
+Claude app, or a terminal on the VM. No Herdr, no extra multiplexer.
 
 Nothing here is destroyed. The local transcript stays on disk and the local repo is untouched —
 trebuchet copies, it never moves — so a failed throw costs nothing but a stray workspace on the far
@@ -23,6 +28,25 @@ Two things have to travel:
 letter or a digit replaced by `-`. `/Users/cm/dev/skills` becomes `-Users-cm-dev-skills`. Home
 differs between machines, so the local and remote slugs are never the same — compute both.
 
+## Not disturbing an existing daemon
+
+The user may already run Claude Code servers on the far side — a `claude remote-control` server as a
+systemd unit, other background sessions, or both. A trebuchet throw is just one more background
+session under the same per-user supervisor that already hosts them, so it coexists by design. Hold to
+these and it stays out of their way:
+
+- **Never touch their server.** Don't stop, restart, or reconfigure a `claude remote-control`
+  process or its systemd unit. You are adding a session, not managing theirs.
+- **Leave `CLAUDE_CONFIG_DIR` alone.** Setting it spawns a *separate* supervisor with its own
+  session list, so the throw would vanish from their `claude agents` and their claude.ai list. Use
+  the default (`~/.claude`) so the thrown session lands in the same supervisor as everything else.
+- **Give the session a distinct `--name`.** Never reuse the name their server registers under (often
+  the hostname, e.g. `dev-chris`). Name the throw after the repo and branch so the two are
+  told apart in the claude.ai session list.
+- **Throw into the repo directory.** A `claude remote-control` server keeps a per-directory resume
+  record. The repo path differs from the server's working directory, so there is no collision — one
+  more reason `REMOTE_REPO` must be the repo, not `$HOME`.
+
 ## 1. Preflight
 
 ```bash
@@ -34,22 +58,22 @@ ssh -o BatchMode=yes "$HOST" true
 ```
 
 `ssh <host> <cmd>` runs non-interactively, so a login-shell `PATH` does not apply and
-`~/.local/bin` is usually missing. Resolve both binaries once and use absolute paths everywhere
-after:
+`~/.local/bin` is usually missing. Resolve the binary once and use its absolute path everywhere
+after — call it `$RC`:
 
 ```bash
-ssh "$HOST" 'command -v claude; command -v herdr || ls ~/.local/bin/herdr'
+ssh "$HOST" 'command -v claude || ls ~/.local/bin/claude'
+ssh "$HOST" "$RC --version"
 ```
 
-Call the herdr path `$RH`, then check the far side has a server to talk to:
+The background resume path needs Claude Code **v2.1.257 or later** on the far side; that is the
+version where `--bg --resume <full id>` continues the session in place under the same id instead of
+forking a copy. Older than that, stop and ask the user to update Claude Code on the VM.
 
-```bash
-ssh "$HOST" "$RH status | head -20; $RH session list"
-```
-
-No server means Herdr is not set up there yet. Stop and ask the user to run
-`herdr machine add <ssh-target> --label <label>` locally — it installs and starts the remote server,
-and needs an interactive terminal for its approval prompts. Do not attempt the install yourself.
+Remote Control signs in with the machine's saved claude.ai account, so the VM must already be logged
+in with a subscription account (API-key auth can't drive Remote Control). A machine that already runs
+a `claude remote-control` server or background sessions is logged in; if in doubt, `ssh "$HOST" "$RC
+agents --json"` succeeding is enough to proceed.
 
 ## 2. Agree on the remote path
 
@@ -60,7 +84,7 @@ REMOTE_REPO=${LOCAL_REPO/#$HOME/$REMOTE_HOME}
 
 If the repo is not under `$HOME`, or the user passed a path as an argument, use that instead.
 Confirm `REMOTE_REPO` with the user before writing anything to the VM. Everything downstream —
-the slug, the workspace cwd, the path rewrite — is keyed on it, and getting it wrong scatters files
+the slug, the session's cwd, the path rewrite — is keyed on it, and getting it wrong scatters files
 in a directory nobody asked for.
 
 ## 3. Sync the working tree
@@ -119,13 +143,21 @@ REMOTE_SLUG=$(printf '%s' "$REMOTE_REPO" | sed 's/[^a-zA-Z0-9]/-/g')
 ssh "$HOST" "mkdir -p ~/.claude/projects/$REMOTE_SLUG"
 
 sed "s|$LOCAL_REPO|$REMOTE_REPO|g; s|$HOME|$REMOTE_HOME|g" "$TRANSCRIPT" \
+  | grep -v '"type":"bridge-session"' \
   | ssh "$HOST" "cat > ~/.claude/projects/$REMOTE_SLUG/$SID.jsonl"
 ```
 
-The rewrite is what makes the history's file references resolve on the far side. It is a blunt
-substitution over the whole transcript, so it also catches home paths that have nothing to do with
-the repo — acceptable, and better than a history that points at directories the VM does not have.
-Skip the rewrite entirely when both paths already match.
+Two transforms here, both deliberate:
+
+- **The path rewrite** is what makes the history's file references resolve on the far side. It is a
+  blunt substitution over the whole transcript, so it also catches home paths that have nothing to
+  do with the repo — acceptable, and better than a history that points at directories the VM does
+  not have. Skip it entirely when both paths already match.
+- **Dropping `bridge-session` lines** strips this conversation's Remote Control reconnection record.
+  Those records name the claude.ai session the *local* terminal owns; carried across, the resumed
+  session would try to reconnect to it and contend with the machine you threw from. Without them, the
+  far side registers a fresh Remote Control session cleanly. If the local session never had Remote
+  Control on, there are no such lines and the `grep` is a no-op.
 
 Carry the sidecar directory too when the session has one; it holds tool results the transcript
 refers to by reference:
@@ -134,52 +166,68 @@ refers to by reference:
 [ -d "$(dirname "$TRANSCRIPT")/$SID" ] && rsync -a "$(dirname "$TRANSCRIPT")/$SID/" "$HOST:.claude/projects/$REMOTE_SLUG/$SID/"
 ```
 
-## 5. Start it in Herdr
+## 5. Launch it
 
-Check whether the remote directory is trusted, because an untrusted one changes what happens next:
-
-```bash
-ssh "$HOST" "python3 -c \"import json,os;d=json.load(open(os.path.expanduser('~/.claude.json')));print(d.get('projects',{}).get('$REMOTE_REPO',{}).get('hasTrustDialogAccepted'))\""
-```
-
-Create a workspace at the repo and start the agent in its root pane:
+Start the session in the background, in the repo directory, with Remote Control on and a distinct
+name:
 
 ```bash
-ssh "$HOST" "$RH workspace create --cwd $REMOTE_REPO --label <repo-name> --no-focus"
-ssh "$HOST" "$RH agent start <name> --kind claude --pane <root-pane-id> --timeout 60000 -- --resume $SID"
+NAME="<repo-name>/$BRANCH"
+ssh "$HOST" "cd $REMOTE_REPO && $RC --bg --remote-control --name '$NAME' --resume $SID" < /dev/null
 ```
 
-Read `root_pane.pane_id` out of the workspace response rather than guessing it, and use `--no-focus`
-so the throw does not yank the remote TUI away from whatever the user has open there.
+What each piece buys:
 
-If the directory was not trusted, `agent start` returns `agent_not_ready` and the agent sits on the
-folder-trust prompt. That is a success, not a failure — Claude is up and waiting. Report it and let
-the user answer the prompt when they attach. Trusting a directory on the user's machine is their
-decision, not something to send keys for.
+- **`--bg`** hands the session to the supervisor daemon and returns immediately. No terminal stays
+  attached, and it survives your SSH disconnect. It also means the workspace-trust dialog is skipped
+  (background sessions are non-interactive), so a directory Claude has never seen on the VM just runs
+  — none of Herdr's folder-trust waiting.
+- **`--remote-control`** registers the session with claude.ai so you can reach it from a browser or
+  the Claude app.
+- **`--resume $SID`** continues *this* conversation. On v2.1.257+ it continues in place under the
+  same id, because no session with that id is running on the VM yet.
+- **`< /dev/null`** keeps ssh from holding a stdin the background launcher does not need.
 
-Confirm the throw landed:
+The command prints a short id and the session's claude.ai URL — capture both:
+
+```
+backgrounded · 571c910e · <name>
+```
+
+The short id is the first eight characters of `$SID`. Pull the URL from the session's log:
 
 ```bash
-ssh "$HOST" "$RH agent read <name> --source visible --lines 40"
+ssh "$HOST" "$RC logs ${SID:0:8}" | grep -o -E 'https://claude.ai/code/[A-Za-z0-9_]+' | tail -1
 ```
 
-The last few exchanges of this conversation should be on screen.
+Confirm the throw landed by reading the log — the last few exchanges of this conversation, and an
+`/rc is active` line with the URL, should be there:
+
+```bash
+ssh "$HOST" "$RC logs ${SID:0:8}" | tail -40
+```
 
 ## 6. Land
 
 Tell the user, in this order:
 
-1. **How to attach.** The saved machine in their local Herdr TUI, or
-   `ssh -t $HOST '<herdr path> session attach default'`.
-2. **The trust prompt**, if the agent is blocked on one.
-3. **To stop working here.** Both machines now hold the same session id, and typing into either
+1. **How to attach.** Any of:
+   - Open the claude.ai/code URL in a browser, or find the session by its `<name>` in the session
+     list at claude.ai/code or in the Claude app.
+   - On the VM: `ssh -t $HOST '<claude path> attach ${SID:0:8}'` opens it in a terminal.
+2. **To stop working here.** Both machines now hold the same session id, and typing into either
    writes its own transcript from that point on. They never merge. Whichever side they choose, the
    other has to be left alone.
+
+The background session keeps running on the VM whether or not anyone is attached. To end it later:
+`ssh "$HOST" "<claude path> stop ${SID:0:8}"`, and `claude rm` to drop it from the list.
 
 ## Gotchas
 
 - The transcript's last entry is normally a tool call that was still in flight, so the resumed
   session opens showing it as interrupted. Expected — the history above it is intact.
+- Throw the same session twice and the second one finds the id already running, so it starts a copy
+  under a new id and says so in a `note:` line. The first throw is untouched.
 - `git diff HEAD` flattens the index. What was staged arrives unstaged.
 - Ignored files do not travel: `.venv`, `node_modules`, build output, `.env`. Anything the session
   depended on that git does not track has to be rebuilt or copied on purpose.
