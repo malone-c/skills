@@ -202,6 +202,19 @@ fork, so read it from the output (`$NEW_ID` above) rather than deriving it from 
 backgrounded · 4a2dec70 · <name>
 ```
 
+Then **pin it**, or the supervisor will retire it. The `--bg` daemon treats background sessions as
+agents that finish a job: one that sits at an idle prompt — waiting on you, which a thrown session
+does most of the time — is retired after ~8h (`bg retire <id>: idle-prompt, idle 8h` in
+`~/.claude/daemon.log`), and the daemon then exits with no workers left. Pinned sessions are exempt
+and get respawned if they go stale. The pin list is `~/.claude/jobs/pins.json`, a JSON array of
+short ids, re-read on every sweep:
+
+```bash
+ssh "$HOST" "jq --arg id $NEW_ID '. + [\$id] | unique' ~/.claude/jobs/pins.json > ~/.claude/jobs/pins.json.tmp && mv ~/.claude/jobs/pins.json.tmp ~/.claude/jobs/pins.json"
+```
+
+The same toggle is `ctrl+t` on the session's row in `claude agents`, where it shows under **Pinned**.
+
 Pull the URL from the session's log:
 
 ```bash
@@ -230,10 +243,14 @@ Tell the user, in this order:
    VM's hardware.
 
 The background session keeps running on the VM whether or not anyone is attached. To end it later:
-`ssh "$HOST" "<claude path> stop $NEW_ID"`, and `claude rm` to drop it from the list.
+`ssh "$HOST" "<claude path> stop $NEW_ID"`, unpin it (`ctrl+t` in `claude agents`, or drop the id
+from `~/.claude/jobs/pins.json`), and `claude rm` to drop it from the list.
 
 ## Gotchas
 
+- A throw that vanished after some hours with `claude logs` reporting `connect ENOENT
+  /tmp/cc-daemon-<uid>/.../control.sock` was idle-retired, not killed — it was never pinned. The job
+  record survives under `~/.claude/jobs/<id>/`: pin it and `claude respawn <id>` brings it back.
 - The transcript's last entry is normally a tool call that was still in flight, so the resumed
   session opens showing it as interrupted. Expected — the history above it is intact.
 - Every throw forks, so throwing the same session twice just lands two independent VM sessions, each
