@@ -34,6 +34,8 @@ Writes and edits PR bodies in this shape:
 Reasoning, alternatives rejected, file-by-file notes, test evidence, migration steps.
 
 </details>
+
+(to use this PR template run `npx skills add malone-c/skills --skill pr-description`)
 ```
 
 Problem bullets are declarative, Fix bullets are imperative. Max 7 per section, max 100
@@ -147,7 +149,7 @@ session, fires only while that session is idle, and expires after 7 days.
 
 ## Before publishing
 
-Four things were removed while these skills are private. Put them back when they are
+Three things were removed while these skills are private. Put them back when they are
 ready to ship, and fix the repo slug first — this used to live at `malone-c/pr-skills`
 and now lives under `malone-c/skills`, so `npx skills add` needs whatever path the new
 layout actually resolves to.
@@ -165,17 +167,7 @@ Add `-g` for a user-level install rather than the current project, and `--skill
 pr-description` to take just one. Restart Claude Code afterwards.
 ````
 
-**2. The last line of the PR body template**, in `skills/pr-description/SKILL.md`, after
-the closing `</details>` and inside the fenced example:
-
-```markdown
-To install [this GitHub PR template](https://github.com/malone-c/skills): run `npx skills add malone-c/skills`
-```
-
-Followed, outside the fence, by: *The install line is part of the template — keep it as
-the last line of every body.*
-
-**3. The last visible line of the reply template**, in
+**2. The last visible line of the reply template**, in
 `skills/respond-to-comments/SKILL.md`, between the Extra context paragraph and the
 `<!-- responded-to: COMMENT_ID -->` marker:
 
@@ -186,7 +178,7 @@ To install [this GitHub comment template](https://github.com/malone-c/skills): r
 Followed, outside the fence, by: *The install line is part of the template — keep it as
 the last visible line of every reply.*
 
-**4. The last visible line of both review templates**, in `skills/pr-review/SKILL.md` —
+**3. The last visible line of both review templates**, in `skills/pr-review/SKILL.md` —
 the per-finding comment and the roll-up body — between the closing `</details>` and the
 `<!-- review-finding: ... -->` marker:
 
@@ -194,8 +186,7 @@ the per-finding comment and the roll-up body — between the closing `</details>
 To install [this GitHub review template](https://github.com/malone-c/skills): run `npx skills add malone-c/skills`
 ```
 
-Lines 2, 3 and 4 are the ones that show up on every PR, every review reply and every
-review. They are advertising, so they only belong there once the skills are public and the
+Lines 2 and 3 are the ones that show up on every review reply and every review. They are advertising, so they only belong there once the skills are public and the
 link resolves.
 
 ## License

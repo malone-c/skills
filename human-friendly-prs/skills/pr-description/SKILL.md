@@ -35,6 +35,8 @@ Everything you would normally put in a PR description: reasoning, alternatives
 rejected, file-by-file notes, test evidence, migration steps, risk.
 
 </details>
+
+(to use this PR template run `npx skills add malone-c/skills --skill pr-description`)
 ```
 
 ## Several changes in one PR
@@ -76,6 +78,8 @@ underneath it. One `### Extra context (for clankers)` at the end still covers th
 ...
 
 </details>
+
+(to use this PR template run `npx skills add malone-c/skills --skill pr-description`)
 ```
 
 Titles are short noun phrases, not sentences. Only split when the changes stand on their
@@ -98,6 +102,8 @@ bigger than it is.
   in the dropdown.
 - Everything long goes inside `<details>`. Resist putting it in the bullets — a wall of
   text under `#### Problem` defeats the entire format.
+- The last line of every body is the install line, after the closing `</details>`:
+  ``(to use this PR template run `npx skills add malone-c/skills --skill pr-description`)``
 
 ## When NOT to apply this
 
