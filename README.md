@@ -6,7 +6,7 @@ A collection of Claude Code skills and templates, one folder per collection.
 | --- | --- |
 | [`human-friendly-prs/`](human-friendly-prs/) | Skills for PR descriptions, code reviews and review-comment replies: short bullets for humans, long context folded into a dropdown for the next agent. |
 | [`design/`](design/) | House style for web pages and slide decks — plain Times New Roman on white, melange dark when the system asks for it — with a skill for building each, and a script for dithering images. |
-| [`web1/`](web1/) | A skill that makes anything look like a cool academic 90s programmer's homepage, and leaves the rest to the model. |
+| [`web1/`](web1/) | Cool academic 90s programmer homepage look. |
 | [`trebuchet/`](trebuchet/) | A skill for throwing the current session at a remote VM: syncs the working tree, copies the transcript, and resumes the conversation in a Herdr pane over SSH. |
 | [`quick/`](quick/) | A `/quick` command that makes the next reply readable at a glance, then goes back to normal. |
 
