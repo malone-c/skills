@@ -8,4 +8,4 @@ npx skills add malone-c/skills --skill basic
 
 https://github.com/user-attachments/assets/953f9ed9-3106-4a40-b2df-b967f7342e6d
 
-<img src="examples/receipt.svg" width="360">
+![](examples/receipt.png)
