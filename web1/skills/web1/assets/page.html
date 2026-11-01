@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Title</title>
+<style>
+  body {
+    margin: 0 auto; max-width: 760px; padding: 8px 16px 24px; background: #fff; color: #000;
+    font: 17px/1.4 "Times New Roman", Times, serif;
+  }
+  textarea { font: inherit; }
+  a { color: #0000ee; }
+  a:visited { color: #551a8b; }
+  h1 { margin: 12px 0 2px; font-size: 28px; }
+  h2 { margin: 20px 0 4px; font-size: 21px; }
+  h3 { margin: 14px 0 2px; font-size: 17px; }
+  hr { border: 0; border-top: 1px solid #000; margin: 10px 0; }
+  .meta { font-size: 14px; }
+  .quiet { color: #444; font-style: italic; }
+  .error { color: #c00; }
+  blockquote { margin: 8px 24px; }
+  figure { margin: 12px 0; }
+  figure img { max-width: 100%; border: 1px solid #000; }
+  figcaption { font-size: 14px; font-style: italic; }
+  .scroll { overflow-x: auto; }
+  table.data { border-collapse: collapse; font-size: 15px; }
+  table.data th, table.data td { border: 1px solid #808080; padding: 2px 8px; text-align: left; vertical-align: top; }
+  table.data .num { text-align: right; }
+  table.data tr.current { background: #ffffcc; }
+</style>
+</head>
+<body>
+<h1>Title</h1>
+<div class="meta">One line of context: a date, an author, a link to the source.</div>
+<hr>
+
+<p>The opening paragraph says what this is and what it found, in the first two sentences.
+Links look like <a href="https://example.com">this</a> and turn purple once visited.</p>
+
+<h2>A section</h2>
+<p>Body text. Keep paragraphs short. Use <b>bold</b> for the one phrase a skimmer must not miss,
+and nothing else for emphasis.</p>
+<ul>
+  <li>A list item.</li>
+  <li>Another list item, with a <a href="#">link</a>.</li>
+</ul>
+
+<h2>Numbers</h2>
+<div class="scroll">
+<table class="data">
+  <thead><tr><th>Name</th><th>Count</th><th>Share</th></tr></thead>
+  <tbody>
+    <tr><td>First</td><td class="num">1,204</td><td class="num">61%</td></tr>
+    <tr class="current"><td>Second</td><td class="num">512</td><td class="num">26%</td></tr>
+    <tr><td>Third</td><td class="num">250</td><td class="num">13%</td></tr>
+  </tbody>
+</table>
+</div>
+
+<figure>
+  <img src="figure.png" alt="What the figure shows" width="600">
+  <figcaption>Figure 1. What the figure shows, in one sentence.</figcaption>
+</figure>
+
+<blockquote>A quotation, set in from both sides.</blockquote>
+<p class="quiet">Secondary text: an attribution, an aside, a recorded reply.</p>
+
+<hr>
+<div class="meta"><a href="#">Previous</a> · <a href="#">Index</a> · <a href="#">Next</a></div>
+</body>
+</html>

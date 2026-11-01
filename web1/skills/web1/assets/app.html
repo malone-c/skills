@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App name</title>
+<style>
+  body {
+    margin: 0 auto; max-width: 1100px; padding: 8px 16px 24px; background: #fff; color: #000;
+    font: 17px/1.4 "Times New Roman", Times, serif;
+  }
+  textarea { font: inherit; }
+  a { color: #0000ee; }
+  a:visited { color: #551a8b; }
+  h1 { margin: 12px 0 2px; font-size: 28px; }
+  hr { border: 0; border-top: 1px solid #000; margin: 10px 0; }
+  .meta { font-size: 14px; }
+  .quiet { color: #444; font-style: italic; }
+  .note { color: #555; }
+  .error { color: #c00; }
+  [hidden] { display: none !important; }
+  /* Fixed, so long one-line entries are cut off instead of widening their column. */
+  table.layout { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  table.layout > tbody > tr > td { vertical-align: top; padding: 0; }
+  td.side { width: 36%; padding-right: 16px !important; border-right: 1px solid #000; }
+  td.main { padding-left: 16px !important; }
+  .box { overflow-y: auto; margin: 6px 0; padding: 6px 8px; border: 1px inset #808080; }
+  ol.box { height: 60vh; padding-left: 28px; font-size: 15px; }
+  ol.box li { margin-bottom: 6px; }
+  ol.box li[aria-current="true"] { background: #ffffcc; }
+  ol.box .quiet { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #log { height: 50vh; overflow-wrap: anywhere; }
+  #log p { margin: 0 0 8px; white-space: pre-wrap; }
+  #log b { font-weight: bold; }
+  #q { width: 60%; }
+  #message { width: 100%; box-sizing: border-box; }
+  fieldset { margin-top: 12px; font-size: 15px; }
+  .controls { margin-top: 4px; font-size: 14px; }
+  .controls input[type=number] { width: 4.5em; }
+  @media (max-width: 760px) {
+    table.layout, table.layout > tbody, table.layout > tbody > tr, table.layout > tbody > tr > td { display: block; width: auto; }
+    td.side { border-right: 0; padding-right: 0 !important; }
+    td.main { padding-left: 0 !important; margin-top: 12px; }
+    ol.box { height: 32vh; }
+    #q { width: calc(100% - 3.5em); box-sizing: border-box; }
+  }
+</style>
+</head>
+<body>
+<h1>App name</h1>
+<div class="meta">What it does, in one line, with a link to <a href="https://example.com">the source</a>.
+  Signed in as <span id="account">someone</span>. <label>Mode: <select><option>First</option><option>Second</option></select></label></div>
+<hr>
+<table class="layout"><tbody><tr>
+  <td class="side">
+    <form>
+      <label for="q"><b>Search:</b></label>
+      <input id="q" type="search" placeholder="cat, ford, ghost…" autocomplete="off">
+      <input type="submit" value="Go">
+    </form>
+    <div class="meta">3 matches. <a href="#">[shuffle]</a></div>
+    <ol class="box">
+      <li aria-current="true"><a href="#1">First result</a> (Kind)<span class="quiet">"A one-line excerpt that gets cut off when it runs past the column…"</span></li>
+      <li><a href="#2">Second result</a> (Kind)<span class="quiet">"Another excerpt."</span></li>
+      <li><a href="#3">Third result</a> (Other kind)<span class="quiet">"A third excerpt."</span></li>
+    </ol>
+    <fieldset>
+      <legend><b>Settings</b></legend>
+      <label>Size <input type="number" value="4" min="1" max="9"></label>
+      <label><input type="checkbox" checked> Option</label><br>
+      <input type="button" value="Apply">
+    </fieldset>
+  </td>
+  <td class="main">
+    <div>Showing <b>First result</b> <span class="meta">(one detail)</span></div>
+    <div id="log" class="box">
+      <p><b>you&gt;</b> A message.</p>
+      <p><b>First result&gt;</b> A reply.</p>
+      <p class="note">A status note from the app.</p>
+      <p class="error">An error, in one sentence that says what to do.</p>
+    </div>
+    <form>
+      <textarea id="message" rows="3" placeholder="Type here. Enter sends, Shift+Enter starts a new line."></textarea>
+      <div class="controls">
+        <input type="submit" value="Send">
+        <input type="button" value="Stop" disabled>
+        <input type="button" value="Clear">
+        &nbsp; <label>Amount <input type="number" value="0.7" step="0.1"></label>
+      </div>
+    </form>
+  </td>
+</tr></tbody></table>
+</body>
+</html>
