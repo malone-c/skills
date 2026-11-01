@@ -1,6 +1,6 @@
 ---
-name: web1
-description: "Gives anything you make the look of an academic 90s programmer's homepage. Use whenever you make something people will look at and no other style is named, or when the user mentions web1 or this design."
+name: basic
+description: "Gives anything you make the look of an academic 90s programmer's homepage. Use whenever you make something people will look at and no other style is named, or when the user mentions the basic style or this design."
 ---
 
 Make it look like an academic 90s programmer's homepage.

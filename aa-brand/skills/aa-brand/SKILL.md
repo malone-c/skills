@@ -1,6 +1,6 @@
 ---
 name: aa-brand
-description: "Makes Artificial Analysis (AA) things look like a page of artificialanalysis.ai, using the AA brand kit. Use for anything made for or on behalf of Artificial Analysis, or when the user mentions AA styling or the brand kit. For AA work it replaces web1."
+description: "Makes Artificial Analysis (AA) things look like a page of artificialanalysis.ai, using the AA brand kit. Use for anything made for or on behalf of Artificial Analysis, or when the user mentions AA styling or the brand kit. For AA work it replaces basic."
 ---
 
 Make it look like a page of https://artificialanalysis.ai, using the brand kit at https://artificialanalysis.ai/brand-kit. Look at the live site for anything not covered here.
