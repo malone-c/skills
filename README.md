@@ -10,6 +10,4 @@ A collection of Claude Code skills and templates, one folder per collection.
 | [`trebuchet/`](trebuchet/) | A skill for throwing the current session at a remote VM: syncs the working tree, copies the transcript, and resumes the conversation there as a background Remote Control session. |
 | [`quick/`](quick/) | A `/quick` command that makes the next reply readable at a glance, then goes back to normal. |
 
-## License
-
-MIT
+Intellectual property is not real
