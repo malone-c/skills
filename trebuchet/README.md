@@ -30,7 +30,3 @@ Staged and unstaged changes arrive merged, because the patch is a single `git di
 files do not travel at all — `.venv`, `node_modules`, build output, `.env` are yours to recreate.
 The throw forks: the VM session shares history up to the throw and diverges after it, so the two
 never merge back.
-
-## License
-
-No licenses, no masters.
